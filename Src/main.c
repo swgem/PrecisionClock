@@ -52,11 +52,14 @@ TIM_HandleTypeDef htim3;
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 
-static unsigned long cb_counter = 0; // multiplo de 3us
-static volatile unsigned long sec_debug = 0;
-static unsigned char flag_sec = 0;
+__root static unsigned long curr_sec = 0;
+__root static unsigned long curr_msec = 0;
+__root static unsigned long curr_usec = 0;
 
-__root static unsigned long sec_lora;
+__root static unsigned long lora_sec = 0;
+__root static unsigned long lora_msec = 0;
+__root static unsigned long lora_usec = 0;
+
 __root static uint8_t spi_data;
 
 /* USER CODE END PV */
@@ -76,9 +79,13 @@ static void MX_TIM3_Init(void);
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-  // GPIOA->ODR ^= GPIO_PIN_10;
-  cb_counter++;
-  if (!(cb_counter % 200000)) flag_sec = 1;
+  curr_msec++;
+  if(curr_msec == 1000)
+  {
+    curr_msec = 0;
+    curr_sec++;
+    // __HAL_TIM_GET_COUNTER(&htim3);
+  }
 }
 
 void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
@@ -92,7 +99,9 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   {
     case GPIO_PIN_10:
     {
-      sec_lora = sec_debug;
+      lora_sec = curr_sec;
+      lora_msec = curr_msec;
+      lora_usec = __HAL_TIM_GET_COUNTER(&htim3);
     }
     break;
 
@@ -149,12 +158,6 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    if (flag_sec)
-    {
-      flag_sec = 0;
-
-      sec_debug++;
-    }
 
   /* USER CODE END WHILE */
 
