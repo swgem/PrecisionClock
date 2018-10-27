@@ -74,8 +74,8 @@
 
 /* USER CODE BEGIN Private defines */
 
-#define PRESC_VALUE         35
-#define COUNT_VALUE         9
+#define PRESC_VALUE         71
+#define COUNT_VALUE         999
 
 #define TIMER_PERIOD_US     ((PRESC_VALUE + 1) * (COUNT_VALUE + 1)) / 64
 // #define PERIOD_PER_SEC      (unsigned long)(1000000 / TIMER_PERIOD_US)
