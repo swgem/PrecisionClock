@@ -58,6 +58,12 @@
 #define USART_RX_GPIO_Port GPIOA
 #define LD2_Pin GPIO_PIN_5
 #define LD2_GPIO_Port GPIOA
+#define LORA_INPUT_Pin GPIO_PIN_0
+#define LORA_INPUT_GPIO_Port GPIOB
+#define LORA_INPUT_EXTI_IRQn EXTI0_IRQn
+#define GPS_RST_Pin GPIO_PIN_10
+#define GPS_RST_GPIO_Port GPIOA
+#define GPS_RST_EXTI_IRQn EXTI15_10_IRQn
 #define TMS_Pin GPIO_PIN_13
 #define TMS_GPIO_Port GPIOA
 #define TCK_Pin GPIO_PIN_14
