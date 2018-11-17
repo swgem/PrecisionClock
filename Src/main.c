@@ -212,7 +212,7 @@ int main(void)
       send_data = 0;
 
       // Send data
-      HAL_SPI_Transmit(&hspi2, (uint8_t *)&spi_data_t, 1, HAL_MAX_DELAY);
+      HAL_SPI_Transmit(&hspi2, (uint8_t *)&spi_data_t, 1, 5);
       
       // Enter reception mode
       HAL_SPI_Receive_IT(&hspi2, &spi_data_r, 1);
