@@ -126,11 +126,20 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
   switch (GPIO_Pin)
   {
-    case GPIO_PIN_10:
+    case LORA_INPUT_Pin:
     {
-      lora_sec = curr_sec;
-      lora_msec = curr_msec;
-      lora_usec = __HAL_TIM_GET_COUNTER(&htim3);
+      // Register time when the modem receives a msg
+      curr_ticks = __HAL_TIM_GET_COUNTER(&htim3);
+    }
+    break;
+
+    case GPS_RST_Pin:
+    {
+      // Reset timer registers
+      __HAL_TIM_SET_PRESCALER(&htim3,0);
+      __HAL_TIM_SET_COUNTER(&htim3,0);
+      __HAL_TIM_SET_PRESCALER(&htim3,8);
+      __HAL_TIM_SET_COUNTER(&htim3,0);
     }
     break;
 
