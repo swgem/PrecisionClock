@@ -80,6 +80,14 @@
 #define TIMER_PERIOD_US     ((PRESC_VALUE + 1) * (COUNT_VALUE + 1)) / 64
 // #define PERIOD_PER_SEC      (unsigned long)(1000000 / TIMER_PERIOD_US)
 
+typedef enum
+{
+  t_ticks_byte0 = 0,
+  t_ticks_byte1,
+  t_ticks_byte2,
+  t_ticks_byte3
+} SPIState_t;
+
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

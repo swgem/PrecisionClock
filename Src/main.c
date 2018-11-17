@@ -60,7 +60,12 @@ __root static unsigned long lora_sec = 0;
 __root static unsigned long lora_msec = 0;
 __root static unsigned long lora_usec = 0;
 
-__root static uint8_t spi_data;
+__root static uint32_t curr_ticks = 0x04030201;
+
+__root static uint8_t spi_data_r;
+__root static uint8_t spi_data_t;
+
+static uint8_t send_data = 0;
 
 /* USER CODE END PV */
 
@@ -90,6 +95,49 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
 {
+  unsigned long error;
+  uint8_t state_t;
+
+  error = 0;
+  state_t = spi_data_r;
+
+  switch (state_t)
+  {
+    case t_ticks_byte0:
+    {
+      spi_data_t = (uint8_t)(curr_ticks >> 0);
+    }
+    break;
+
+    case t_ticks_byte1:
+    {
+      spi_data_t = (uint8_t)(curr_ticks >> 8);
+    }
+    break;
+
+    case t_ticks_byte2:
+    {
+      spi_data_t = (uint8_t)(curr_ticks >> 16);
+    }
+    break;
+
+    case t_ticks_byte3:
+    {
+      spi_data_t = (uint8_t)(curr_ticks >> 24);
+    }
+    break;
+
+    default:
+    {
+      error = 1;
+    }
+  }
+
+  if (!error)
+  {
+    send_data = 1;
+  }
+
   return;
 }
 
@@ -149,7 +197,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   
   HAL_TIM_Base_Start_IT(&htim3);
-  HAL_SPI_Receive_IT(&hspi2, &spi_data, 1);
+  HAL_SPI_Receive_IT(&hspi2, &spi_data_r, 1);
 
 
   /* USER CODE END 2 */
@@ -158,6 +206,17 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+
+    if (send_data)
+    {
+      send_data = 0;
+
+      // Send data
+      HAL_SPI_Transmit(&hspi2, (uint8_t *)&spi_data_t, 1, HAL_MAX_DELAY);
+      
+      // Enter reception mode
+      HAL_SPI_Receive_IT(&hspi2, &spi_data_r, 1);
+    }
 
   /* USER CODE END WHILE */
 
