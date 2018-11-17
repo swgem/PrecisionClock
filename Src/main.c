@@ -52,18 +52,10 @@ TIM_HandleTypeDef htim3;
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 
-__root static unsigned long curr_sec = 0;
-__root static unsigned long curr_msec = 0;
-__root static unsigned long curr_usec = 0;
+static uint32_t curr_ticks;
 
-__root static unsigned long lora_sec = 0;
-__root static unsigned long lora_msec = 0;
-__root static unsigned long lora_usec = 0;
-
-__root static uint32_t curr_ticks = 0x04030201;
-
-__root static uint8_t spi_data_r;
-__root static uint8_t spi_data_t;
+static uint8_t spi_data_r;
+static uint8_t spi_data_t;
 
 static uint8_t send_data = 0;
 
