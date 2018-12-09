@@ -59,6 +59,8 @@ static uint8_t spi_data_t;
 
 static uint8_t send_data = 0;
 
+static uint32_t debounce_counter_ms = 0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -73,6 +75,14 @@ static void MX_TIM3_Init(void);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
+
+void HAL_SYSTICK_Callback(void)
+{
+  if (debounce_counter_ms > 0)
+  {
+    debounce_counter_ms--;
+  }
+}
 
 void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
 {
@@ -124,12 +134,20 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
+  uint32_t curr_ticks_aux;
+
   switch (GPIO_Pin)
   {
     case LORA_INPUT_Pin:
     {
       // Register time when the modem receives a msg
-      curr_ticks = __HAL_TIM_GET_COUNTER(&htim3);
+      curr_ticks_aux = __HAL_TIM_GET_COUNTER(&htim3);
+  
+      if (debounce_counter_ms == 0)
+      {
+        debounce_counter_ms = DEBOUNCE_TIMEOUT;
+        curr_ticks = curr_ticks_aux;
+      }
     }
     break;
 
